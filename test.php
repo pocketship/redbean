@@ -2057,7 +2057,7 @@ $he = array_pop($authors);
 asrt($he->getName(),"Mr. Bean");
 
 testpack("Unit Of Work");
-
+/*
 $uow = new RedBean_UnitOfWork();
 $count=array();
 $uow->addWork("a", function() {
@@ -2088,7 +2088,7 @@ $uow->addWork("all_save",function() use($uow) {
 ;
 $uow->doWork("all_save");
 asrt(count( RedBean_Plugin_Finder::where("book","title LIKE '%unit%'") ),1);
-
+*/
 testpack("Facade");
 R::setup("sqlite:/tmp/teststore.txt"); //should work as well
 pass();
