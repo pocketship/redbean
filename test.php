@@ -2207,7 +2207,9 @@ asrt(Model_Cigar::$reachedAfterDeleted,TRUE);
 asrt(Model_Cigar::$reachedDispense,TRUE);
 asrt(Model_Cigar::$reachedAfterUpdate,TRUE);
 asrt($cgr->getTaste("tabacco"),"smokey like tabacco");
-
+//test __isset
+asrt(empty($cgr->taste),true);
+asrt(empty($cgr->brand),false);
 testpack("copy()");
 R::setup(
   "mysql:host={$ini['mysql']['host']};dbname={$ini['mysql']['schema']}",
@@ -2641,8 +2643,7 @@ return $bean->prop;
 
 
 //this module tests whether values we store are the same we get returned
-//PDO is a bit unpred. with this but using STRINGIFY attr this should work we test this here
-testpack("pdo and types");
+testpack("setting and getting values, pdo/types");
 asrt(setget("-1"),"-1");
 asrt(setget(-1),"-1");
 asrt(setget("-0.25"),"-0.25");
@@ -2661,11 +2662,16 @@ asrt(setget("."),".");
 asrt(setget("\""),"\"");
 asrt(setget("just some text"),"just some text");
 asrt(setget(true),"1");
-asrt(setget(false),"");
+asrt(setget(false),"0");
 asrt(setget("true"),"true");
 asrt(setget("false"),"false");
 asrt(setget("null"),"null");
 asrt(setget("NULL"),"NULL");
+asrt(setget(null),null);
+asrt((setget(0)==0),true);
+asrt((setget(1)==1),true);
+asrt((setget(true)==true),true);
+asrt((setget(false)==false),true);  
 
 testpack("fetch tagged items");
 R::wipe("book");
