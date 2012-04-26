@@ -502,20 +502,7 @@ class RedBean_OODB extends RedBean_Observable {
 			$row = $this->stash[$id];
 		}
 		else {
-			try {
-				$rows = $this->writer->selectRecord($type,array('id'=>array($id)));
-			}catch(RedBean_Exception_SQL $e ) {
-				if (
-				$this->writer->sqlStateIn($e->getSQLState(),
-				array(
-					RedBean_QueryWriter::C_SQLSTATE_NO_SUCH_COLUMN,
-					RedBean_QueryWriter::C_SQLSTATE_NO_SUCH_TABLE)
-				)
-				) {
-					$rows = 0;
-					if ($this->isFrozen) throw $e; //only throw if frozen;
-				}
-			}
+      $rows = $this->writer->selectRecord($type,array('id'=>array($id)));
 			if (!$rows) return $bean; // $this->dispense($type); -- no need...
 			$row = array_pop($rows);
 		}
