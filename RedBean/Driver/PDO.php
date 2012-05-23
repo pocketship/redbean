@@ -186,7 +186,7 @@ class RedBean_Driver_PDO implements RedBean_Driver {
 	 * @param string $sql     the SQL string to be send to database server
 	 * @param array  $aValues the values that need to get bound to the query slots
 	 */
-	protected function runQuery($sql,$aValues) {
+	protected function runQuery($sql,$aValues, $retryCount = 0) {
 		$this->connect();
 		if ($this->debug && $this->logger) {
 			$this->logger->log($sql, $aValues);
@@ -209,11 +209,20 @@ class RedBean_Driver_PDO implements RedBean_Driver {
 		    	$this->rs = array();
 		  	}
 		}catch(PDOException $e) {
-			//Unfortunately the code field is supposed to be int by default (php)
-			//So we need a property to convey the SQL State code.
-			$x = new RedBean_Exception_SQL( $e->getMessage(), 0);
-			$x->setSQLState( $e->getCode() );
-			throw $x;
+      switch($e->getCode()){
+        case 2006:
+          // MySQL Server gone away, try to reconnect 3 times
+          if($retryCount < 3){
+            $this->isConnected = false;
+            return $this->runQuery($sql, $aValues, ++$retryCount);
+          }
+        default:
+          //Unfortunately the code field is supposed to be int by default (php)
+          //So we need a property to convey the SQL State code.
+          $x = new RedBean_Exception_SQL( $e->getMessage(), 0);
+          $x->setSQLState( $e->getCode() );
+          throw $x;
+      }
 		}
 	}
 
